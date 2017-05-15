@@ -1,17 +1,29 @@
 import { Observable } from 'rxjs/Observable'
 import { Subscription } from 'rxjs/Subscription'
 import { BehaviorSubject } from 'rxjs/BehaviorSubject'
+import { w3cwebsocket as W3CWebSocket } from "websocket"
 
-export interface Connection {
+export interface IConnection {
   connectionStatus: Observable<any>,
   messages: Observable<any>,
 }
 
-export default function connect(url: string, input: Observable<any>): Connection {
+export interface IHeaders {}
+export interface IRequestOptions {}
+export interface IClientConfig {}
+
+export default function connect(
+	url: string,
+	input: Observable<any>,
+	protocols: string[] = null,
+	origin?: string,
+	headers?: Object,
+	requestOptions?: Object,
+	clientConfig?: Object): IConnection {
   const connectionStatus = new BehaviorSubject<number>(0)
 
   const messages = new Observable<any>(observer => {
-    const socket = new WebSocket(url)
+    const socket = new W3CWebSocket(url, protocols, origin, headers, requestOptions, clientConfig)
     let inputSubscription: Subscription
 
     let open = false
